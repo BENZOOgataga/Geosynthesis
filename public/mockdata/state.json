@@ -1,0 +1,185 @@
+{
+  "version": "1.0.0",
+  "turn": 1,
+  "year": 2025,
+  "playerNation": "nordland",
+  "nations": [
+    {
+      "id": "nordland",
+      "name": "Nordland",
+      "isPlayer": true,
+      "x": 320,
+      "y": 150,
+      "gdp": 1500000,
+      "population": 45000000,
+      "techLevel": 3,
+      "pollution": 120,
+      "stability": 75,
+      "resources": {
+        "iron": 5000,
+        "oil": 2000,
+        "rare_earth": 500,
+        "food": 8000,
+        "power": 3000
+      },
+      "industries": [
+        { "type": "mining", "level": 2, "output": 1000 },
+        { "type": "manufacturing", "level": 3, "output": 1500 },
+        { "type": "agriculture", "level": 2, "output": 800 }
+      ],
+      "traits": ["industrial_hub", "temperate_climate"],
+      "relations": {
+        "terranova": 65,
+        "zenithia": 40,
+        "aqualis": 55,
+        "solaria": 70
+      }
+    },
+    {
+      "id": "terranova",
+      "name": "Terranova",
+      "isPlayer": false,
+      "x": 580,
+      "y": 280,
+      "gdp": 2100000,
+      "population": 82000000,
+      "techLevel": 4,
+      "pollution": 200,
+      "stability": 60,
+      "resources": {
+        "iron": 7000,
+        "oil": 8000,
+        "rare_earth": 300,
+        "food": 6000,
+        "power": 5000
+      },
+      "industries": [
+        { "type": "energy", "level": 4, "output": 2000 },
+        { "type": "manufacturing", "level": 3, "output": 1800 }
+      ],
+      "traits": ["oil_rich", "authoritarian"],
+      "relations": {
+        "nordland": 65,
+        "zenithia": 80,
+        "aqualis": 30,
+        "solaria": 45
+      }
+    },
+    {
+      "id": "zenithia",
+      "name": "Zenithia",
+      "isPlayer": false,
+      "x": 750,
+      "y": 180,
+      "gdp": 3200000,
+      "population": 125000000,
+      "techLevel": 5,
+      "pollution": 350,
+      "stability": 85,
+      "resources": {
+        "iron": 3000,
+        "oil": 1000,
+        "rare_earth": 2000,
+        "food": 10000,
+        "power": 8000
+      },
+      "industries": [
+        { "type": "tech", "level": 5, "output": 3000 },
+        { "type": "manufacturing", "level": 4, "output": 2500 }
+      ],
+      "traits": ["tech_leader", "high_population"],
+      "relations": {
+        "nordland": 40,
+        "terranova": 80,
+        "aqualis": 50,
+        "solaria": 60
+      }
+    },
+    {
+      "id": "aqualis",
+      "name": "Aqualis",
+      "isPlayer": false,
+      "x": 200,
+      "y": 400,
+      "gdp": 800000,
+      "population": 28000000,
+      "techLevel": 2,
+      "pollution": 40,
+      "stability": 90,
+      "resources": {
+        "iron": 1000,
+        "oil": 500,
+        "rare_earth": 100,
+        "food": 12000,
+        "power": 1000
+      },
+      "industries": [
+        { "type": "agriculture", "level": 4, "output": 2000 },
+        { "type": "tourism", "level": 2, "output": 500 }
+      ],
+      "traits": ["eco_friendly", "island_nation"],
+      "relations": {
+        "nordland": 55,
+        "terranova": 30,
+        "zenithia": 50,
+        "solaria": 75
+      }
+    },
+    {
+      "id": "solaria",
+      "name": "Solaria",
+      "isPlayer": false,
+      "x": 480,
+      "y": 450,
+      "gdp": 1200000,
+      "population": 52000000,
+      "techLevel": 3,
+      "pollution": 80,
+      "stability": 70,
+      "resources": {
+        "iron": 4000,
+        "oil": 3000,
+        "rare_earth": 800,
+        "food": 9000,
+        "power": 4000
+      },
+      "industries": [
+        { "type": "renewable_energy", "level": 3, "output": 1200 },
+        { "type": "agriculture", "level": 2, "output": 900 }
+      ],
+      "traits": ["solar_potential", "democratic"],
+      "relations": {
+        "nordland": 70,
+        "terranova": 45,
+        "zenithia": 60,
+        "aqualis": 75
+      }
+    }
+  ],
+  "globalEvents": [
+    {
+      "id": "evt_001",
+      "turn": 1,
+      "type": "info",
+      "title": "Global Summit Announced",
+      "description": "World leaders to meet in Q2 to discuss climate cooperation.",
+      "effects": {}
+    }
+  ],
+  "tradeRoutes": [
+    {
+      "from": "nordland",
+      "to": "solaria",
+      "resource": "iron",
+      "amount": 500,
+      "pricePerUnit": 12
+    },
+    {
+      "from": "aqualis",
+      "to": "zenithia",
+      "resource": "food",
+      "amount": 2000,
+      "pricePerUnit": 3
+    }
+  ]
+}
