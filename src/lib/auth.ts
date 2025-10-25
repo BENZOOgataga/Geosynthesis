@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { getDatabase } from './database';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'geosynthesis-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'geosynthesis-secret-change-in-production';
 const SALT_ROUNDS = 10;
 
 export interface User {
@@ -26,7 +26,7 @@ export async function registerUser(
   password: string
 ): Promise<AuthResult> {
   try {
-    const db = getDatabase();
+    const sql = await getDatabase();
     
     // Validate input
     if (!username || username.length < 3) {
@@ -44,8 +44,11 @@ export async function registerUser(
     }
 
     // Check if user already exists
-    const existingUser = db.prepare('SELECT id FROM users WHERE username = ? OR email = ?').get(username, email);
-    if (existingUser) {
+    const existingUser = await sql`
+      SELECT id FROM users WHERE username = ${username} OR email = ${email}
+    `;
+    
+    if (existingUser.length > 0) {
       return { success: false, message: 'Nom d\'utilisateur ou email déjà utilisé' };
     }
 
@@ -53,19 +56,20 @@ export async function registerUser(
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
     // Insert user
-    const result = db.prepare(
-      'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)'
-    ).run(username, email, passwordHash);
+    const result = await sql`
+      INSERT INTO users (username, email, password_hash)
+      VALUES (${username}, ${email}, ${passwordHash})
+      RETURNING id, username, email, created_at, last_login
+    `;
 
-    const userId = result.lastInsertRowid as number;
+    const user = result[0] as User;
 
-    // Get created user
-    const user = db.prepare('SELECT id, username, email, created_at FROM users WHERE id = ?').get(userId) as User;
-
-    // Generate token
-    const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, {
-      expiresIn: '7d'
-    });
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: user.id, username: user.username },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     return {
       success: true,
@@ -81,16 +85,20 @@ export async function registerUser(
 
 export async function loginUser(username: string, password: string): Promise<AuthResult> {
   try {
-    const db = getDatabase();
+    const sql = await getDatabase();
 
     // Get user
-    const user = db.prepare(
-      'SELECT id, username, email, password_hash, created_at, last_login FROM users WHERE username = ?'
-    ).get(username) as any;
+    const users = await sql`
+      SELECT id, username, email, password_hash, created_at, last_login 
+      FROM users 
+      WHERE username = ${username}
+    `;
 
-    if (!user) {
+    if (users.length === 0) {
       return { success: false, message: 'Nom d\'utilisateur ou mot de passe incorrect' };
     }
+
+    const user = users[0] as any;
 
     // Verify password
     const isValid = await bcrypt.compare(password, user.password_hash);
@@ -99,12 +107,18 @@ export async function loginUser(username: string, password: string): Promise<Aut
     }
 
     // Update last login
-    db.prepare('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?').run(user.id);
+    await sql`
+      UPDATE users 
+      SET last_login = CURRENT_TIMESTAMP 
+      WHERE id = ${user.id}
+    `;
 
-    // Generate token
-    const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, {
-      expiresIn: '7d'
-    });
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: user.id, username: user.username },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     const { password_hash, ...userWithoutPassword } = user;
 
@@ -129,14 +143,17 @@ export function verifyToken(token: string): { userId: number; username: string }
   }
 }
 
-export function getUserById(userId: number): User | null {
+export async function getUserById(userId: number): Promise<User | null> {
   try {
-    const db = getDatabase();
-    const user = db.prepare(
-      'SELECT id, username, email, created_at, last_login FROM users WHERE id = ?'
-    ).get(userId) as User | undefined;
+    const sql = await getDatabase();
     
-    return user || null;
+    const users = await sql`
+      SELECT id, username, email, created_at, last_login 
+      FROM users 
+      WHERE id = ${userId}
+    `;
+    
+    return users.length > 0 ? (users[0] as User) : null;
   } catch (error) {
     console.error('Get user error:', error);
     return null;

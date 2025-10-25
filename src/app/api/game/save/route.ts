@@ -18,21 +18,28 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { gameState, saveName } = body;
 
-    const db = getDatabase();
+    const sql = await getDatabase();
     
     // Check if user has existing save
-    const existingSave = db.prepare('SELECT id FROM game_saves WHERE user_id = ?').get(decoded.userId) as any;
+    const existingSaves = await sql`
+      SELECT id FROM game_saves WHERE user_id = ${decoded.userId}
+    `;
 
-    if (existingSave) {
+    if (existingSaves.length > 0) {
       // Update existing save
-      db.prepare(
-        'UPDATE game_saves SET game_state = ?, save_name = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?'
-      ).run(JSON.stringify(gameState), saveName || 'Sauvegarde auto', decoded.userId);
+      await sql`
+        UPDATE game_saves 
+        SET game_state = ${JSON.stringify(gameState)},
+            save_name = ${saveName || 'Sauvegarde auto'},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ${decoded.userId}
+      `;
     } else {
       // Create new save
-      db.prepare(
-        'INSERT INTO game_saves (user_id, game_state, save_name) VALUES (?, ?, ?)'
-      ).run(decoded.userId, JSON.stringify(gameState), saveName || 'Sauvegarde auto');
+      await sql`
+        INSERT INTO game_saves (user_id, game_state, save_name)
+        VALUES (${decoded.userId}, ${JSON.stringify(gameState)}, ${saveName || 'Sauvegarde auto'})
+      `;
     }
 
     return NextResponse.json({ success: true, message: 'Partie sauvegardée' }, { status: 200 });
@@ -55,18 +62,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, message: 'Token invalide' }, { status: 401 });
     }
 
-    const db = getDatabase();
-    const save = db.prepare(
-      'SELECT game_state, save_name, updated_at FROM game_saves WHERE user_id = ? ORDER BY updated_at DESC LIMIT 1'
-    ).get(decoded.userId) as any;
+    const sql = await getDatabase();
+    const saves = await sql`
+      SELECT game_state, save_name, updated_at 
+      FROM game_saves 
+      WHERE user_id = ${decoded.userId}
+      ORDER BY updated_at DESC 
+      LIMIT 1
+    `;
 
-    if (!save) {
+    if (saves.length === 0) {
       return NextResponse.json({ success: false, message: 'Aucune sauvegarde trouvée' }, { status: 404 });
     }
 
+    const save = saves[0];
+
     return NextResponse.json({
       success: true,
-      gameState: JSON.parse(save.game_state),
+      gameState: typeof save.game_state === 'string' ? JSON.parse(save.game_state) : save.game_state,
       saveName: save.save_name,
       updatedAt: save.updated_at
     }, { status: 200 });

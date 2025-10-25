@@ -1,54 +1,57 @@
-import Database from 'better-sqlite3';
-import path from 'path';
+import { neon } from '@neondatabase/serverless';
 
-let db: Database.Database | null = null;
+// Get Neon connection
+const sql = neon(process.env.POSTGRES_URL || process.env.DATABASE_URL || '');
 
-export function getDatabase(): Database.Database {
-  if (!db) {
-    const dbPath = path.join(process.cwd(), 'geosynthesis.db');
-    db = new Database(dbPath);
-    initializeDatabase(db);
+let initialized = false;
+
+export async function getDatabase() {
+  if (!initialized) {
+    await initializeDatabase();
+    initialized = true;
   }
-  return db;
+  return sql;
 }
 
-function initializeDatabase(database: Database.Database) {
-  // Create users table
-  database.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT UNIQUE NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      password_hash TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      last_login DATETIME
-    )
-  `);
+async function initializeDatabase() {
+  try {
+    // Create users table
+    await sql`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username TEXT UNIQUE NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        last_login TIMESTAMPTZ
+      )
+    `;
 
-  // Create game_saves table
-  database.exec(`
-    CREATE TABLE IF NOT EXISTS game_saves (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      save_name TEXT DEFAULT 'Sauvegarde auto',
-      game_state TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-    )
-  `);
+    // Create game_saves table
+    await sql`
+      CREATE TABLE IF NOT EXISTS game_saves (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        save_name TEXT NOT NULL,
+        game_state JSONB NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
 
-  // Create index for faster lookups
-  database.exec(`
-    CREATE INDEX IF NOT EXISTS idx_user_id ON game_saves(user_id);
-    CREATE INDEX IF NOT EXISTS idx_username ON users(username);
-    CREATE INDEX IF NOT EXISTS idx_email ON users(email);
-  `);
+    // Create indexes
+    await sql`CREATE INDEX IF NOT EXISTS idx_game_saves_user_id ON game_saves(user_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`;
+
+    console.log('✓ Neon Postgres database initialized successfully');
+  } catch (error) {
+    console.error('Database initialization error:', error);
+    // Don't throw - tables might already exist
+  }
 }
 
 export function closeDatabase() {
-  if (db) {
-    db.close();
-    db = null;
-  }
+  // Neon serverless doesn't require explicit closing
+  console.log('Neon connection will be closed automatically');
 }

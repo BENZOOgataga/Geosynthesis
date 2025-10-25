@@ -46,3 +46,4 @@ geosynthesis.db
 geosynthesis.db-journal
 *.sqlite
 *.db
+.vercel
