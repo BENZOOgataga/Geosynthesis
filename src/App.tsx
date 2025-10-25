@@ -8,12 +8,14 @@ import ResearchPanel from './components/ResearchPanel';
 import DiplomacyPanel from './components/DiplomacyPanel';
 import EventFeed from './components/EventFeed';
 import Tutorial from './components/Tutorial';
+import AuthModal from './components/AuthModal';
 import { GameState, Nation, getPlayerNation } from './lib/worldgen';
 import { processEconomicTurn } from './lib/economy';
 import { processAITurns, generateRandomEvent } from './lib/ai';
 import { saveGame, loadGame, autosave, exportSaveToFile, importSaveFromFile } from './lib/saveSystem';
 import './styles/theme.css';
 import './styles/panels.css';
+import './styles/auth.css';
 
 export default function App() {
   const [gameState, setGameState] = useState<GameState | null>(null);
@@ -21,16 +23,56 @@ export default function App() {
   const [activePanel, setActivePanel] = useState<string>('resources');
   const [isPaused, setIsPaused] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isGuestMode, setIsGuestMode] = useState(false);
 
   useEffect(() => {
-    initializeGame();
+    // Check for existing auth token
+    const token = localStorage.getItem('auth_token');
+    const savedUsername = localStorage.getItem('username');
+    
+    if (token && savedUsername) {
+      setAuthToken(token);
+      setUsername(savedUsername);
+      setIsAuthenticated(true);
+      initializeGame(token);
+    } else {
+      // Show auth modal if not authenticated
+      setShowAuthModal(true);
+    }
   }, []);
 
-  const initializeGame = async () => {
+  const initializeGame = async (token?: string) => {
     // Check if tutorial has been completed
     const tutorialCompleted = localStorage.getItem('geosynthesis_tutorial_completed');
     
-    // Try to load saved game first
+    // Try to load from database if authenticated
+    if (token || authToken) {
+      try {
+        const response = await fetch('/api/game/save', {
+          headers: {
+            'Authorization': `Bearer ${token || authToken}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.gameState) {
+            setGameState(data.gameState);
+            const player = getPlayerNation(data.gameState);
+            setSelectedNation(player || null);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load from database:', error);
+      }
+    }
+    
+    // Fallback to localStorage for guest mode
     const saved = loadGame();
     if (saved) {
       setGameState(saved);
@@ -76,7 +118,13 @@ export default function App() {
     }
     
     setGameState(newState);
-    autosave(newState);
+    
+    // Auto-save to database if authenticated, otherwise localStorage
+    if (isAuthenticated && authToken) {
+      saveToDatabase(newState);
+    } else {
+      autosave(newState);
+    }
     
     // Update selected nation if it's the player
     const player = getPlayerNation(newState);
@@ -85,10 +133,72 @@ export default function App() {
     }
   };
 
-  const handleSave = () => {
-    if (gameState && saveGame(gameState)) {
-      alert('Partie sauvegardée avec succès !');
+  const saveToDatabase = async (state: GameState) => {
+    if (!authToken) return;
+    
+    try {
+      const response = await fetch('/api/game/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          saveName: `${username || 'Joueur'} - Auto-save`,
+          gameState: state
+        })
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to save to database');
+        // Fallback to localStorage
+        autosave(state);
+      }
+    } catch (error) {
+      console.error('Error saving to database:', error);
+      autosave(state);
     }
+  };
+
+  const handleSave = async () => {
+    if (!gameState) return;
+    
+    if (isAuthenticated && authToken) {
+      await saveToDatabase(gameState);
+      alert('Partie sauvegardée dans le cloud !');
+    } else if (saveGame(gameState)) {
+      alert('Partie sauvegardée localement !');
+    }
+  };
+
+  const handleLogout = () => {
+    const confirmed = confirm('Voulez-vous vraiment vous déconnecter ? Assurez-vous d\'avoir sauvegardé votre progression.');
+    if (confirmed) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('username');
+      setAuthToken(null);
+      setUsername(null);
+      setIsAuthenticated(false);
+      setShowAuthModal(true);
+      // Save current game to localStorage before logout
+      if (gameState) {
+        saveGame(gameState);
+      }
+    }
+  };
+
+  const handleAuthSuccess = (token: string, user: string) => {
+    setAuthToken(token);
+    setUsername(user);
+    setIsAuthenticated(true);
+    setShowAuthModal(false);
+    initializeGame(token);
+  };
+
+  const handleGuestMode = () => {
+    setIsGuestMode(true);
+    setShowAuthModal(false);
+    initializeGame();
   };
 
   const handleExport = () => {
@@ -130,11 +240,21 @@ export default function App() {
     }
   };
 
-  if (!gameState) {
+  if (!gameState || showAuthModal) {
     return (
-      <div className="loading-screen">
-        <h1>Chargement de Geosynthesis...</h1>
-      </div>
+      <>
+        {!gameState && !showAuthModal && (
+          <div className="loading-screen">
+            <h1>Chargement de Geosynthesis...</h1>
+          </div>
+        )}
+        {showAuthModal && (
+          <AuthModal
+            onSuccess={handleAuthSuccess}
+            onGuestMode={handleGuestMode}
+          />
+        )}
+      </>
     );
   }
 
@@ -152,14 +272,29 @@ export default function App() {
             <span>Tour {gameState.turn}</span>
             <span>Année {gameState.year}</span>
             <span>{playerNation.name}</span>
+            {isAuthenticated && username && (
+              <span className="user-badge">👤 {username}</span>
+            )}
+            {isGuestMode && (
+              <span className="guest-badge" title="Mode invité - Sauvegarde locale uniquement">
+                👤 Invité ⚠️
+              </span>
+            )}
           </div>
         </div>
         
         <div className="header-right">
           <button onClick={handleNewGame} className="btn btn-small">Nouveau</button>
-          <button onClick={handleSave} className="btn btn-small">Sauvegarder</button>
+          <button onClick={handleSave} className="btn btn-small">
+            {isAuthenticated ? '☁️ Sauvegarder' : '💾 Sauvegarder'}
+          </button>
           <button onClick={handleExport} className="btn btn-small">Exporter</button>
           <button onClick={handleImport} className="btn btn-small">Importer</button>
+          {isAuthenticated && (
+            <button onClick={handleLogout} className="btn btn-small btn-warning">
+              Déconnexion
+            </button>
+          )}
           <button onClick={() => setShowTutorial(true)} className="btn btn-small" title="Aide">
             ❓ Aide
           </button>

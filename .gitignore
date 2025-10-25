@@ -40,3 +40,9 @@ Thumbs.db
 # Misc
 *.tsbuildinfo
 next-env.d.ts
+
+# Database
+geosynthesis.db
+geosynthesis.db-journal
+*.sqlite
+*.db
