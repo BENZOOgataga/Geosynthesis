@@ -8,6 +8,21 @@ interface DiplomacyPanelProps {
 }
 
 export default function DiplomacyPanel({ state, playerNation, onRelationChange }: DiplomacyPanelProps) {
+  const traitNames: Record<string, string> = {
+    industrial_hub: 'Pôle industriel',
+    tech_leader: 'Leader technologique',
+    oil_rich: 'Riche en pétrole',
+    eco_friendly: 'Écologique',
+    high_population: 'Forte population',
+    island_nation: 'Nation insulaire',
+    solar_potential: 'Potentiel solaire',
+    mining_power: 'Puissance minière',
+    agricultural_giant: 'Géant agricole',
+    democratic: 'Démocratique',
+    authoritarian: 'Autoritaire',
+    temperate_climate: 'Climat tempéré'
+  };
+
   const getRelationStatus = (value: number): { label: string; color: string } => {
     if (value >= 80) return { label: 'Allié', color: '#22c55e' };
     if (value >= 60) return { label: 'Amical', color: '#84cc16' };
@@ -69,7 +84,7 @@ export default function DiplomacyPanel({ state, playerNation, onRelationChange }
                   <div className="nation-info">
                     <h4>{nation.name}</h4>
                     <div className="nation-details">
-                      Tech Lvl {nation.techLevel} • GDP ${(nation.gdp / 1000000).toFixed(1)}T
+                      Tech Niv {nation.techLevel} • PIB ${(nation.gdp / 1000000).toFixed(1)}T
                     </div>
                   </div>
                   <div className="relation-status" style={{ color: status.color }}>
@@ -115,7 +130,7 @@ export default function DiplomacyPanel({ state, playerNation, onRelationChange }
                 <div className="nation-traits">
                   {nation.traits.slice(0, 3).map(trait => (
                     <span key={trait} className="trait-badge">
-                      {trait.replace(/_/g, ' ')}
+                      {traitNames[trait] || trait.replace(/_/g, ' ')}
                     </span>
                   ))}
                 </div>

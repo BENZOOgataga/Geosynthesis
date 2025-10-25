@@ -121,11 +121,11 @@ export default function MapView({ state, onNationClick, selectedNation }: MapVie
         <div className="map-tooltip">
           <h3>{hoveredNation.name}</h3>
           <div className="tooltip-stats">
-            <div>GDP: ${(hoveredNation.gdp / 1000000).toFixed(1)}T</div>
+            <div>PIB: ${(hoveredNation.gdp / 1000000).toFixed(1)}T</div>
             <div>Pop: {(hoveredNation.population / 1000000).toFixed(1)}M</div>
-            <div>Tech: Lvl {hoveredNation.techLevel}</div>
+            <div>Tech: Niv {hoveredNation.techLevel}</div>
             <div>Pollution: {hoveredNation.pollution}</div>
-            <div>Stability: {hoveredNation.stability}%</div>
+            <div>Stabilité: {hoveredNation.stability}%</div>
           </div>
         </div>
       )}

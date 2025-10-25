@@ -88,7 +88,7 @@ export default function ResearchPanel({ nation, onResearch }: ResearchPanelProps
             return (
               <div key={tier} className="tech-tier">
                 <div className="tier-header" style={{ borderColor: getTierColor(tier) }}>
-                  Tier {tier}
+                  Palier {tier}
                 </div>
                 <div className="tech-grid">
                   {techs.map(tech => {

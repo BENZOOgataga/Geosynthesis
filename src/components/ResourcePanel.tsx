@@ -14,12 +14,31 @@ export default function ResourcePanel({ nation }: ResourcePanelProps) {
     power: '⚡'
   };
 
+  const resourceNames: Record<keyof Resources, string> = {
+    iron: 'Fer',
+    oil: 'Pétrole',
+    rare_earth: 'Terres rares',
+    food: 'Nourriture',
+    power: 'Énergie'
+  };
+
   const resourceColors: Record<keyof Resources, string> = {
     iron: '#94a3b8',
     oil: '#78350f',
     rare_earth: '#a855f7',
     food: '#22c55e',
     power: '#eab308'
+  };
+
+  const industryNames: Record<string, string> = {
+    mining: 'Mines',
+    manufacturing: 'Fabrication',
+    energy: 'Énergie',
+    agriculture: 'Agriculture',
+    tech: 'Technologie',
+    tourism: 'Tourisme',
+    renewable_energy: 'Énergie renouvelable',
+    finance: 'Finance'
   };
 
   const formatNumber = (num: number): string => {
@@ -58,7 +77,7 @@ export default function ResourcePanel({ nation }: ResourcePanelProps) {
               <div key={resource} className="resource-item">
                 <div className="resource-header">
                   <span className="resource-icon">{resourceIcons[resource]}</span>
-                  <span className="resource-name">{resource.replace('_', ' ')}</span>
+                  <span className="resource-name">{resourceNames[resource]}</span>
                 </div>
                 
                 <div className="resource-amount">
@@ -113,7 +132,7 @@ export default function ResourcePanel({ nation }: ResourcePanelProps) {
           <div className="industries-list">
             {nation.industries.map((industry, idx) => (
               <div key={idx} className="industry-item">
-                <div className="industry-name">{industry.type}</div>
+                <div className="industry-name">{industryNames[industry.type] || industry.type}</div>
                 <div className="industry-details">
                   <span>Niv {industry.level}</span>
                   <span>Production: {formatNumber(industry.output)}</span>
