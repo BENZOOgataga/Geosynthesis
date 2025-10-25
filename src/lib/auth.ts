@@ -33,7 +33,9 @@ export async function registerUser(
       return { success: false, message: 'Le nom d\'utilisateur doit contenir au moins 3 caractères' };
     }
     
-    if (!email || !email.includes('@')) {
+    // Improved email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
       return { success: false, message: 'Email invalide' };
     }
     

@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Geosynthesis - Global Strategy Simulation',
-  description: 'Manage your nation in a dynamic global simulation',
+  title: 'Geosynthesis - Simulation de stratégie mondiale',
+  description: 'Gérez votre nation dans une simulation mondiale dynamique',
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body>{children}</body>
     </html>
   );

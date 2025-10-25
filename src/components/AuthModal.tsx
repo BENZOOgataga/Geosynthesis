@@ -77,6 +77,7 @@ export default function AuthModal({ onSuccess, onGuestMode }: AuthModalProps) {
               required
               minLength={3}
               placeholder="Entrez votre nom d'utilisateur"
+              autoComplete="username"
             />
           </div>
 
@@ -90,6 +91,7 @@ export default function AuthModal({ onSuccess, onGuestMode }: AuthModalProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="votre@email.com"
+                autoComplete="email"
               />
             </div>
           )}
@@ -104,6 +106,7 @@ export default function AuthModal({ onSuccess, onGuestMode }: AuthModalProps) {
               required
               minLength={6}
               placeholder="Minimum 6 caractères"
+              autoComplete={isLogin ? "current-password" : "new-password"}
             />
           </div>
 
@@ -118,6 +121,7 @@ export default function AuthModal({ onSuccess, onGuestMode }: AuthModalProps) {
                 required
                 minLength={6}
                 placeholder="Confirmez votre mot de passe"
+                autoComplete="new-password"
               />
             </div>
           )}

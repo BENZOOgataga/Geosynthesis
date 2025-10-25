@@ -6,11 +6,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { username, email, password } = body;
 
+    console.log('Register attempt:', { username, email, passwordLength: password?.length });
+
     const result = await registerUser(username, email, password);
 
     if (result.success) {
       return NextResponse.json(result, { status: 201 });
     } else {
+      console.log('Register failed:', result.message);
       return NextResponse.json(result, { status: 400 });
     }
   } catch (error) {
