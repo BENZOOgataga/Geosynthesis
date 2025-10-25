@@ -7,6 +7,7 @@ import TradePanel from './components/TradePanel';
 import ResearchPanel from './components/ResearchPanel';
 import DiplomacyPanel from './components/DiplomacyPanel';
 import EventFeed from './components/EventFeed';
+import Tutorial from './components/Tutorial';
 import { GameState, Nation, getPlayerNation } from './lib/worldgen';
 import { processEconomicTurn } from './lib/economy';
 import { processAITurns, generateRandomEvent } from './lib/ai';
@@ -19,12 +20,16 @@ export default function App() {
   const [selectedNation, setSelectedNation] = useState<Nation | null>(null);
   const [activePanel, setActivePanel] = useState<string>('resources');
   const [isPaused, setIsPaused] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
     initializeGame();
   }, []);
 
   const initializeGame = async () => {
+    // Check if tutorial has been completed
+    const tutorialCompleted = localStorage.getItem('geosynthesis_tutorial_completed');
+    
     // Try to load saved game first
     const saved = loadGame();
     if (saved) {
@@ -39,6 +44,11 @@ export default function App() {
         setGameState(initialState);
         const player = getPlayerNation(initialState);
         setSelectedNation(player || null);
+        
+        // Show tutorial for new players
+        if (!tutorialCompleted) {
+          setShowTutorial(true);
+        }
       } catch (error) {
         console.error('Failed to load initial state:', error);
       }
@@ -150,6 +160,9 @@ export default function App() {
           <button onClick={handleSave} className="btn btn-small">Sauvegarder</button>
           <button onClick={handleExport} className="btn btn-small">Exporter</button>
           <button onClick={handleImport} className="btn btn-small">Importer</button>
+          <button onClick={() => setShowTutorial(true)} className="btn btn-small" title="Aide">
+            ❓ Aide
+          </button>
           <button
             onClick={() => setIsPaused(!isPaused)}
             className={`btn ${isPaused ? 'btn-primary' : 'btn-warning'}`}
@@ -236,6 +249,14 @@ export default function App() {
           </div>
         </div>
       </div>
+
+      {/* Tutorial Modal */}
+      {showTutorial && (
+        <Tutorial
+          onComplete={() => setShowTutorial(false)}
+          onSkip={() => setShowTutorial(false)}
+        />
+      )}
     </div>
   );
 }

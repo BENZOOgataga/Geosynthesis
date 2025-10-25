@@ -226,3 +226,113 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-border);
 }
+
+/* Tutorial Styles */
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 9998;
+  backdrop-filter: blur(4px);
+}
+
+.tutorial-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, var(--color-bg-medium) 0%, var(--color-bg-dark) 100%);
+  border: 2px solid var(--color-accent-blue);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  z-index: 9999;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: tutorialFadeIn 0.3s ease;
+}
+
+@keyframes tutorialFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.tutorial-header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+}
+
+.tutorial-header h2 {
+  color: var(--color-accent-blue);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tutorial-progress {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.tutorial-content {
+  margin-bottom: 2rem;
+  min-height: 120px;
+}
+
+.tutorial-content p {
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+}
+
+.tutorial-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tutorial-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.tutorial-dots {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1rem;
+}
+
+.tutorial-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-bg-light);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tutorial-dot.active {
+  background: var(--color-accent-blue);
+  transform: scale(1.3);
+}
+
+.tutorial-dot.completed {
+  background: var(--color-accent-green);
+}
+
+.tutorial-dot:hover {
+  transform: scale(1.2);
+}
