@@ -39,6 +39,48 @@
   padding: 1.5rem;
   flex: 1;
   overflow-y: auto;
+  position: relative;
+}
+
+/* Scroll indicators */
+.panel-content::before,
+.panel-content::after {
+  content: '';
+  position: sticky;
+  left: 0;
+  right: 0;
+  height: 20px;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.3s;
+}
+
+.panel-content::before {
+  top: 0;
+  background: linear-gradient(180deg, var(--color-bg-medium) 0%, transparent 100%);
+}
+
+.panel-content::after {
+  bottom: 0;
+  background: linear-gradient(0deg, var(--color-bg-medium) 0%, transparent 100%);
+}
+
+.panel-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: var(--color-bg-dark);
+  border-radius: 4px;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background: var(--color-accent-blue);
+  border-radius: 4px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-purple);
 }
 
 .panel-tabs {

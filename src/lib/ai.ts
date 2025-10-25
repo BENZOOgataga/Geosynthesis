@@ -194,26 +194,26 @@ export function generateRandomEvent(state: GameState): void {
     const eventTypes = [
       {
         type: 'crisis',
-        title: 'Oil Price Shock',
-        description: 'Global oil prices surge by 40% due to supply disruption.',
+        title: 'Crise pétrolière',
+        description: 'Les prix mondiaux du pétrole bondissent de 40% suite à une rupture d\'approvisionnement.',
         effects: { oil_price_multiplier: 1.4 }
       },
       {
         type: 'opportunity',
-        title: 'Tech Breakthrough',
-        description: 'New battery technology discovered, boosting renewable energy.',
+        title: 'Percée technologique',
+        description: 'Nouvelle technologie de batterie découverte, stimulant les énergies renouvelables.',
         effects: { renewable_boost: 1.2 }
       },
       {
         type: 'info',
-        title: 'Climate Summit',
-        description: 'Nations pledge to reduce emissions by 15%.',
+        title: 'Sommet climatique',
+        description: 'Les nations s\'engagent à réduire leurs émissions de 15%.',
         effects: {}
       },
       {
         type: 'crisis',
-        title: 'Crop Failure',
-        description: 'Drought affects multiple regions, food prices rise.',
+        title: 'Échec des récoltes',
+        description: 'La sécheresse affecte plusieurs régions, les prix alimentaires augmentent.',
         effects: { food_production_penalty: 0.85 }
       }
     ];

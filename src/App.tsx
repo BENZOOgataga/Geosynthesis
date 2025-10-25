@@ -9,6 +9,7 @@ import DiplomacyPanel from './components/DiplomacyPanel';
 import EventFeed from './components/EventFeed';
 import Tutorial from './components/Tutorial';
 import AuthModal from './components/AuthModal';
+import TurnSummary from './components/TurnSummary';
 import { GameState, Nation, getPlayerNation } from './lib/worldgen';
 import { processEconomicTurn } from './lib/economy';
 import { processAITurns, generateRandomEvent } from './lib/ai';
@@ -16,13 +17,16 @@ import { saveGame, loadGame, autosave, exportSaveToFile, importSaveFromFile } fr
 import './styles/theme.css';
 import './styles/panels.css';
 import './styles/auth.css';
+import './styles/turnSummary.css';
 
 export default function App() {
   const [gameState, setGameState] = useState<GameState | null>(null);
+  const [previousGameState, setPreviousGameState] = useState<GameState | null>(null);
   const [selectedNation, setSelectedNation] = useState<Nation | null>(null);
   const [activePanel, setActivePanel] = useState<string>('resources');
   const [isPaused, setIsPaused] = useState(true);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showTurnSummary, setShowTurnSummary] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -44,6 +48,19 @@ export default function App() {
       setShowAuthModal(true);
     }
   }, []);
+
+  // Keyboard shortcut: Space to advance turn
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && isPaused && gameState && !showTutorial && !showAuthModal) {
+        e.preventDefault();
+        processTurn();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isPaused, gameState, showTutorial, showAuthModal]);
 
   const initializeGame = async (token?: string) => {
     // Check if tutorial has been completed
@@ -100,6 +117,9 @@ export default function App() {
   const processTurn = () => {
     if (!gameState) return;
 
+    // Save current state for comparison
+    setPreviousGameState({ ...gameState });
+
     const newState = { ...gameState };
     
     // Economic simulation
@@ -118,6 +138,9 @@ export default function App() {
     }
     
     setGameState(newState);
+    
+    // Show turn summary
+    setShowTurnSummary(true);
     
     // Auto-save to database if authenticated, otherwise localStorage
     if (isAuthenticated && authToken) {
@@ -390,6 +413,15 @@ export default function App() {
         <Tutorial
           onComplete={() => setShowTutorial(false)}
           onSkip={() => setShowTutorial(false)}
+        />
+      )}
+
+      {/* Turn Summary */}
+      {showTurnSummary && previousGameState && gameState && (
+        <TurnSummary
+          previousState={previousGameState}
+          currentState={gameState}
+          onClose={() => setShowTurnSummary(false)}
         />
       )}
     </div>
