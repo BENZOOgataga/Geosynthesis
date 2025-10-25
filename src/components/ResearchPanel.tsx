@@ -60,22 +60,22 @@ export default function ResearchPanel({ nation, onResearch }: ResearchPanelProps
   return (
     <div className="panel research-panel">
       <div className="panel-header">
-        <h2>Research & Development</h2>
-        <div className="panel-subtitle">Advance your technology</div>
+        <h2>Recherche & Développement</h2>
+        <div className="panel-subtitle">Faites progresser votre technologie</div>
       </div>
 
       <div className="panel-content">
         <div className="research-stats">
           <div className="stat-box">
-            <div className="stat-label">Research Budget</div>
+            <div className="stat-label">Budget recherche</div>
             <div className="stat-value">${(nation.gdp * 0.1).toLocaleString()}</div>
           </div>
           <div className="stat-box">
-            <div className="stat-label">Current Tech Level</div>
-            <div className="stat-value">Level {nation.techLevel}</div>
+            <div className="stat-label">Niveau tech actuel</div>
+            <div className="stat-value">Niveau {nation.techLevel}</div>
           </div>
           <div className="stat-box">
-            <div className="stat-label">Technologies Researched</div>
+            <div className="stat-label">Technologies recherchées</div>
             <div className="stat-value">{researched.size}</div>
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function ResearchPanel({ nation, onResearch }: ResearchPanelProps
                         <div className="tech-cost">${tech.cost.toLocaleString()}</div>
                         
                         {isResearched && (
-                          <div className="tech-status">✓ Completed</div>
+                          <div className="tech-status">✓ Terminé</div>
                         )}
                         
                         {!isResearched && canDo && (
@@ -116,12 +116,12 @@ export default function ResearchPanel({ nation, onResearch }: ResearchPanelProps
                             }}
                             className="btn btn-small"
                           >
-                            Research
+                            Rechercher
                           </button>
                         )}
                         
                         {!isResearched && !canDo && (
-                          <div className="tech-status locked">🔒 Locked</div>
+                          <div className="tech-status locked">🔒 Verrouillé</div>
                         )}
                       </div>
                     );
@@ -136,12 +136,12 @@ export default function ResearchPanel({ nation, onResearch }: ResearchPanelProps
           <div className="tech-details">
             <h3>{selectedTech.name}</h3>
             <div className="tech-info">
-              <div><strong>Tier:</strong> {selectedTech.tier}</div>
-              <div><strong>Cost:</strong> ${selectedTech.cost.toLocaleString()}</div>
+              <div><strong>Palier:</strong> {selectedTech.tier}</div>
+              <div><strong>Coût:</strong> ${selectedTech.cost.toLocaleString()}</div>
               
               {selectedTech.requirements.length > 0 && (
                 <div>
-                  <strong>Requirements:</strong>
+                  <strong>Prérequis:</strong>
                   <ul>
                     {selectedTech.requirements.map(req => (
                       <li key={req}>{req}</li>
@@ -151,11 +151,11 @@ export default function ResearchPanel({ nation, onResearch }: ResearchPanelProps
               )}
               
               <div>
-                <strong>Effects:</strong>
+                <strong>Effets:</strong>
                 <ul>
                   {Object.entries(selectedTech.effects).map(([key, value]) => (
                     <li key={key}>
-                      {key}: {typeof value === 'number' ? (value > 1 ? `+${((value - 1) * 100).toFixed(0)}%` : `${((1 - value) * 100).toFixed(0)}% reduction`) : value}
+                      {key}: {typeof value === 'number' ? (value > 1 ? `+${((value - 1) * 100).toFixed(0)}%` : `${((1 - value) * 100).toFixed(0)}% de réduction`) : value}
                     </li>
                   ))}
                 </ul>

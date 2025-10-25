@@ -17,7 +17,7 @@ export default function TradePanel({ state, playerNation, onTradeCreated }: Trad
 
   const handleCreateTrade = () => {
     if (!selectedPartner) {
-      alert('Please select a trade partner');
+      alert('Veuillez sélectionner un partenaire commercial');
       return;
     }
 
@@ -30,11 +30,11 @@ export default function TradePanel({ state, playerNation, onTradeCreated }: Trad
     );
 
     if (success) {
-      alert(`Trade route created: ${tradeAmount} ${selectedResource} to ${selectedPartner}`);
+      alert(`Route commerciale créée: ${tradeAmount} ${selectedResource} vers ${selectedPartner}`);
       onTradeCreated();
       setTradeAmount(100);
     } else {
-      alert('Failed to create trade route. Check resources.');
+      alert('Échec de la création de la route. Vérifiez vos ressources.');
     }
   };
 
@@ -45,22 +45,22 @@ export default function TradePanel({ state, playerNation, onTradeCreated }: Trad
   return (
     <div className="panel trade-panel">
       <div className="panel-header">
-        <h2>Trade & Commerce</h2>
-        <div className="panel-subtitle">Manage exports and imports</div>
+        <h2>Commerce & Échanges</h2>
+        <div className="panel-subtitle">Gérer les exportations et importations</div>
       </div>
 
       <div className="panel-content">
         <div className="trade-creator">
-          <h3>Create New Trade Route</h3>
+          <h3>Créer une nouvelle route commerciale</h3>
           
           <div className="form-group">
-            <label>Trade Partner</label>
+            <label>Partenaire commercial</label>
             <select
               value={selectedPartner}
               onChange={(e) => setSelectedPartner(e.target.value)}
               className="select-input"
             >
-              <option value="">Select Nation</option>
+              <option value="">Sélectionner une nation</option>
               {otherNations.map(nation => {
                 const relation = playerNation.relations[nation.id];
                 return (
@@ -73,22 +73,22 @@ export default function TradePanel({ state, playerNation, onTradeCreated }: Trad
           </div>
 
           <div className="form-group">
-            <label>Resource</label>
+            <label>Ressource</label>
             <select
               value={selectedResource}
               onChange={(e) => setSelectedResource(e.target.value as keyof Resources)}
               className="select-input"
             >
-              <option value="iron">Iron ({playerNation.resources.iron})</option>
-              <option value="oil">Oil ({playerNation.resources.oil})</option>
-              <option value="rare_earth">Rare Earth ({playerNation.resources.rare_earth})</option>
-              <option value="food">Food ({playerNation.resources.food})</option>
-              <option value="power">Power ({playerNation.resources.power})</option>
+              <option value="iron">Fer ({playerNation.resources.iron})</option>
+              <option value="oil">Pétrole ({playerNation.resources.oil})</option>
+              <option value="rare_earth">Terres rares ({playerNation.resources.rare_earth})</option>
+              <option value="food">Nourriture ({playerNation.resources.food})</option>
+              <option value="power">Énergie ({playerNation.resources.power})</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label>Amount per Turn</label>
+            <label>Quantité par tour</label>
             <input
               type="number"
               value={tradeAmount}
@@ -101,14 +101,14 @@ export default function TradePanel({ state, playerNation, onTradeCreated }: Trad
           </div>
 
           <button onClick={handleCreateTrade} className="btn btn-primary">
-            Establish Trade Route
+            Établir une route commerciale
           </button>
         </div>
 
         <div className="active-trades">
-          <h3>Active Trade Routes</h3>
+          <h3>Routes commerciales actives</h3>
           {playerTrades.length === 0 ? (
-            <div className="empty-state">No active trade routes</div>
+            <div className="empty-state">Aucune route commerciale active</div>
           ) : (
             <div className="trades-list">
               {playerTrades.map((trade, idx) => {

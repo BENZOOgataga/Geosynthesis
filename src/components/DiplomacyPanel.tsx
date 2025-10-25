@@ -9,17 +9,17 @@ interface DiplomacyPanelProps {
 
 export default function DiplomacyPanel({ state, playerNation, onRelationChange }: DiplomacyPanelProps) {
   const getRelationStatus = (value: number): { label: string; color: string } => {
-    if (value >= 80) return { label: 'Allied', color: '#22c55e' };
-    if (value >= 60) return { label: 'Friendly', color: '#84cc16' };
-    if (value >= 40) return { label: 'Neutral', color: '#eab308' };
-    if (value >= 20) return { label: 'Tense', color: '#f97316' };
+    if (value >= 80) return { label: 'Allié', color: '#22c55e' };
+    if (value >= 60) return { label: 'Amical', color: '#84cc16' };
+    if (value >= 40) return { label: 'Neutre', color: '#eab308' };
+    if (value >= 20) return { label: 'Tendu', color: '#f97316' };
     return { label: 'Hostile', color: '#ef4444' };
   };
 
   const improveRelations = (nationId: string) => {
     const cost = 10000;
     if (playerNation.gdp < cost) {
-      alert('Insufficient funds for diplomatic mission');
+      alert('Fonds insuffisants pour une mission diplomatique');
       return;
     }
     
@@ -32,26 +32,26 @@ export default function DiplomacyPanel({ state, playerNation, onRelationChange }
   return (
     <div className="panel diplomacy-panel">
       <div className="panel-header">
-        <h2>Diplomacy & Relations</h2>
-        <div className="panel-subtitle">Manage international relations</div>
+        <h2>Diplomatie & Relations</h2>
+        <div className="panel-subtitle">Gérer les relations internationales</div>
       </div>
 
       <div className="panel-content">
         <div className="diplomacy-overview">
           <div className="stat-box">
-            <div className="stat-label">Allies</div>
+            <div className="stat-label">Alliés</div>
             <div className="stat-value">
               {Object.values(playerNation.relations).filter(r => r >= 80).length}
             </div>
           </div>
           <div className="stat-box">
-            <div className="stat-label">Friendly Nations</div>
+            <div className="stat-label">Nations amies</div>
             <div className="stat-value">
               {Object.values(playerNation.relations).filter(r => r >= 60 && r < 80).length}
             </div>
           </div>
           <div className="stat-box">
-            <div className="stat-label">Hostile Nations</div>
+            <div className="stat-label">Nations hostiles</div>
             <div className="stat-value">
               {Object.values(playerNation.relations).filter(r => r < 40).length}
             </div>
@@ -96,18 +96,18 @@ export default function DiplomacyPanel({ state, playerNation, onRelationChange }
                     className="btn btn-small"
                     disabled={relationValue >= 100}
                   >
-                    Improve Relations ($10K)
+                    Améliorer les relations (10K$)
                   </button>
                   
                   {relationValue >= 60 && (
                     <div className="relation-benefits">
-                      ✓ Trade available
+                      ✓ Commerce disponible
                     </div>
                   )}
                   
                   {relationValue >= 80 && (
                     <div className="relation-benefits">
-                      ✓ Technology sharing
+                      ✓ Partage technologique
                     </div>
                   )}
                 </div>

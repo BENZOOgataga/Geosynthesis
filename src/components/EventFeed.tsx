@@ -32,14 +32,14 @@ export default function EventFeed({ events, turn }: EventFeedProps) {
   return (
     <div className="panel event-feed">
       <div className="panel-header">
-        <h2>Global Events</h2>
-        <div className="panel-subtitle">Turn {turn}</div>
+        <h2>Événements mondiaux</h2>
+        <div className="panel-subtitle">Tour {turn}</div>
       </div>
 
       <div className="panel-content">
         {recentEvents.length === 0 ? (
           <div className="empty-state">
-            No recent events
+            Aucun événement récent
           </div>
         ) : (
           <div className="events-list">
@@ -51,7 +51,7 @@ export default function EventFeed({ events, turn }: EventFeedProps) {
               >
                 <div className="event-header">
                   <span className="event-icon">{getEventIcon(event.type)}</span>
-                  <span className="event-turn">Turn {event.turn}</span>
+                  <span className="event-turn">Tour {event.turn}</span>
                 </div>
                 
                 <div className="event-title">{event.title}</div>
@@ -59,7 +59,7 @@ export default function EventFeed({ events, turn }: EventFeedProps) {
                 
                 {Object.keys(event.effects).length > 0 && (
                   <div className="event-effects">
-                    <strong>Effects:</strong>
+                    <strong>Effets:</strong>
                     <ul>
                       {Object.entries(event.effects).map(([key, value]) => (
                         <li key={key}>

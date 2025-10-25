@@ -43,8 +43,8 @@ export default function ResourcePanel({ nation }: ResourcePanelProps) {
   return (
     <div className="panel resource-panel">
       <div className="panel-header">
-        <h2>Resources - {nation.name}</h2>
-        <div className="panel-subtitle">Storage & Production</div>
+        <h2>Ressources - {nation.name}</h2>
+        <div className="panel-subtitle">Stockage & Production</div>
       </div>
       
       <div className="panel-content">
@@ -76,7 +76,7 @@ export default function ResourcePanel({ nation }: ResourcePanelProps) {
                 </div>
                 
                 <div className="resource-status">
-                  {storageLevel > 80 ? 'High' : storageLevel > 40 ? 'Medium' : 'Low'}
+                  {storageLevel > 80 ? 'Élevé' : storageLevel > 40 ? 'Moyen' : 'Faible'}
                 </div>
               </div>
             );
@@ -85,7 +85,7 @@ export default function ResourcePanel({ nation }: ResourcePanelProps) {
         
         <div className="nation-stats">
           <div className="stat-row">
-            <span className="stat-label">GDP:</span>
+            <span className="stat-label">PIB:</span>
             <span className="stat-value">${formatNumber(nation.gdp)}</span>
           </div>
           <div className="stat-row">
@@ -93,8 +93,8 @@ export default function ResourcePanel({ nation }: ResourcePanelProps) {
             <span className="stat-value">{formatNumber(nation.population)}</span>
           </div>
           <div className="stat-row">
-            <span className="stat-label">Tech Level:</span>
-            <span className="stat-value">Level {nation.techLevel}</span>
+            <span className="stat-label">Niveau tech:</span>
+            <span className="stat-value">Niveau {nation.techLevel}</span>
           </div>
           <div className="stat-row">
             <span className="stat-label">Pollution:</span>
@@ -103,7 +103,7 @@ export default function ResourcePanel({ nation }: ResourcePanelProps) {
             </span>
           </div>
           <div className="stat-row">
-            <span className="stat-label">Stability:</span>
+            <span className="stat-label">Stabilité:</span>
             <span className="stat-value">{nation.stability}%</span>
           </div>
         </div>
@@ -115,8 +115,8 @@ export default function ResourcePanel({ nation }: ResourcePanelProps) {
               <div key={idx} className="industry-item">
                 <div className="industry-name">{industry.type}</div>
                 <div className="industry-details">
-                  <span>Lvl {industry.level}</span>
-                  <span>Output: {formatNumber(industry.output)}</span>
+                  <span>Niv {industry.level}</span>
+                  <span>Production: {formatNumber(industry.output)}</span>
                 </div>
               </div>
             ))}

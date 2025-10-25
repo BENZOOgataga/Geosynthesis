@@ -77,7 +77,7 @@ export default function App() {
 
   const handleSave = () => {
     if (gameState && saveGame(gameState)) {
-      alert('Game saved successfully!');
+      alert('Partie sauvegardée avec succès !');
     }
   };
 
@@ -99,9 +99,9 @@ export default function App() {
           setGameState(imported);
           const player = getPlayerNation(imported);
           setSelectedNation(player || null);
-          alert('Game loaded successfully!');
+          alert('Partie chargée avec succès !');
         } catch (error) {
-          alert('Failed to import save file');
+          alert('Échec du chargement de la sauvegarde');
         }
       }
     };
@@ -109,7 +109,7 @@ export default function App() {
   };
 
   const handleNewGame = async () => {
-    const confirmed = confirm('Start a new game? Current progress will be lost.');
+    const confirmed = confirm('Démarrer une nouvelle partie ? Votre progression actuelle sera perdue.');
     if (confirmed) {
       const response = await fetch('/mockdata/state.json');
       const initialState = await response.json();
@@ -123,14 +123,14 @@ export default function App() {
   if (!gameState) {
     return (
       <div className="loading-screen">
-        <h1>Loading Geosynthesis...</h1>
+        <h1>Chargement de Geosynthesis...</h1>
       </div>
     );
   }
 
   const playerNation = getPlayerNation(gameState);
   if (!playerNation) {
-    return <div>Error: Player nation not found</div>;
+    return <div>Erreur: Nation du joueur introuvable</div>;
   }
 
   return (
@@ -139,25 +139,25 @@ export default function App() {
         <div className="header-left">
           <h1>⚙️ Geosynthesis</h1>
           <div className="game-info">
-            <span>Turn {gameState.turn}</span>
-            <span>Year {gameState.year}</span>
+            <span>Tour {gameState.turn}</span>
+            <span>Année {gameState.year}</span>
             <span>{playerNation.name}</span>
           </div>
         </div>
         
         <div className="header-right">
-          <button onClick={handleNewGame} className="btn btn-small">New Game</button>
-          <button onClick={handleSave} className="btn btn-small">Save</button>
-          <button onClick={handleExport} className="btn btn-small">Export</button>
-          <button onClick={handleImport} className="btn btn-small">Import</button>
+          <button onClick={handleNewGame} className="btn btn-small">Nouveau</button>
+          <button onClick={handleSave} className="btn btn-small">Sauvegarder</button>
+          <button onClick={handleExport} className="btn btn-small">Exporter</button>
+          <button onClick={handleImport} className="btn btn-small">Importer</button>
           <button
             onClick={() => setIsPaused(!isPaused)}
             className={`btn ${isPaused ? 'btn-primary' : 'btn-warning'}`}
           >
-            {isPaused ? '▶ Resume' : '⏸ Pause'}
+            {isPaused ? '▶ Reprendre' : '⏸ Pause'}
           </button>
           <button onClick={processTurn} className="btn btn-success" disabled={!isPaused}>
-            Next Turn →
+            Tour suivant →
           </button>
         </div>
       </header>
@@ -179,25 +179,25 @@ export default function App() {
               className={activePanel === 'resources' ? 'active' : ''}
               onClick={() => setActivePanel('resources')}
             >
-              Resources
+              Ressources
             </button>
             <button
               className={activePanel === 'trade' ? 'active' : ''}
               onClick={() => setActivePanel('trade')}
             >
-              Trade
+              Commerce
             </button>
             <button
               className={activePanel === 'research' ? 'active' : ''}
               onClick={() => setActivePanel('research')}
             >
-              Research
+              Recherche
             </button>
             <button
               className={activePanel === 'diplomacy' ? 'active' : ''}
               onClick={() => setActivePanel('diplomacy')}
             >
-              Diplomacy
+              Diplomatie
             </button>
           </div>
 
